@@ -2,27 +2,30 @@ let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
 
 function addExpense() {
     let amount = document.getElementById("amount").value;
-    let category = document.getElementById("category").value;
-    let description = document.getElementById("description").value;
+    let parsedAmount = parseFloat(amount);
+    let category = document.getElementById("category").value.trim();
+    let description = document.getElementById("description").value.trim();
 
-    if (amount === "" || category === "") {
-        alert("Please enter all fields!");
+    if (amount === "" || Number.isNaN(parsedAmount) || parsedAmount <= 0 || category === "") {
+        alert("Please enter a valid amount and category!");
         return;
     }
 
     let expense = {
-        amount: parseFloat(amount),
+        amount: parsedAmount,
         category: category,
         description: description
     };
 
     expenses.push(expense);
     localStorage.setItem("expenses", JSON.stringify(expenses));
+
+    document.getElementById("amount").value = "";
+    document.getElementById("category").value = "";
+    document.getElementById("description").value = "";
+
     displayExpenses();
 }
-document.getElementById("amount").value = "";
-document.getElementById("category").value = "";
-document.getElementById("description").value = "";
 
 
 function displayExpenses() {
@@ -45,6 +48,8 @@ list.appendChild(li);
     });
 
     document.getElementById("total").textContent = "Total: ₹" + total;
+
+    renderChart();
 }
 
 window.onload = function() {
@@ -58,7 +63,7 @@ function deleteExpense(index) {
 
     displayExpenses();
 }
-renderChart();
+
 function renderChart() {
     let categoryMap = {};
 
